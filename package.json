@@ -1,0 +1,35 @@
+{
+  "name": "unified",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.5.0",
+    "@tauri-apps/api": "^2.4.1",
+    "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
+    "clappr": "^0.3.13",
+    "dgram": "^1.0.1",
+    "framer-motion": "^12.6.3",
+    "jsonwebtoken": "^9.0.2",
+    "next": "15.2.4",
+    "nodemailer": "^6.10.0",
+    "prisma": "^6.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "webtorrent": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "playwright": "^1.51.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5"
+  }
+}

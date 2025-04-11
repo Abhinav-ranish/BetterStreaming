@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String        @id @default(uuid())
+  email     String        @unique
+  password  String
+  otp       String?
+  verified  Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  sessions  UserSession[]
+}
+
+model StreamingService {
+  id       String             @id @default(uuid())
+  name     String             @unique
+  logoUrl  String?
+  accounts StreamingAccount[]
+  titles   Title[]
+}
+
+model StreamingAccount {
+  id          String           @id @default(uuid())
+  email       String
+  password    String
+  maxUsers    Int              @default(5)
+  activeUsers Int              @default(0)
+  serviceId   String
+  service     StreamingService @relation(fields: [serviceId], references: [id])
+  sessions    UserSession[]
+}
+
+model UserSession {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  accountId String
+  account   StreamingAccount @relation(fields: [accountId], references: [id])
+  createdAt DateTime         @default(now())
+}
+
+model Title {
+  id        String           @id @default(uuid())
+  name      String
+  imageUrl  String?
+  category  String? // e.g., Movie, Series, Trending, etc.
+  serviceId String
+  service   StreamingService @relation(fields: [serviceId], references: [id])
+  createdAt DateTime         @default(now())
+}
