@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card'; // ✅ NO .tsx
 import { motion } from 'framer-motion';
 
 export default function DashboardPage() {
