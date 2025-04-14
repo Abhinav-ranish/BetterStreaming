@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const STREMIO_HOSTS = [
-  'https://thepiratebay-plus.strem.fun/'
+  'https://thepiratebay-plus.strem.fun',
   'https://torrentio.strem.fun',
   'https://v3-cinemeta.strem.io',
 ];

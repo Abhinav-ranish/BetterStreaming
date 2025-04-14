@@ -1,51 +1,56 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { pickBestStream } from '@/utils/pickBestStream';
 
 export default function WatchClient({ imdbId }: { imdbId: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchAndPlay = async () => {
+    const fetchAndStream = async () => {
       try {
         const res = await fetch(`/api/title/${imdbId}/stream`);
         const data = await res.json();
-        const best = pickBestStream(data.streams);
+        const best = data.streams?.[0];
 
-        if (!best) {
+        if (!best?.infoHash) {
           setError('❌ No valid stream found');
           return;
         }
 
-        const magnet = `magnet:?xt=urn:btih:${best.infoHash}&dn=${encodeURIComponent(best.name || 'stream')}`;
-        console.log('🎯 Auto-selected stream:', best.title);
+        const magnet = `magnet:?xt=urn:btih:${best.infoHash}&dn=${encodeURIComponent(best.title || 'stream')}`;
 
         if ('__TAURI__' in window) {
           const { invoke } = await import('@tauri-apps/api/tauri');
-          await invoke('start_stream', { magnet });
+          await invoke('start_stream_server', { magnet });
+          setVideoUrl('http://localhost:4000/stream');
         } else {
-          alert('Open this in the BetterStreaming desktop app to start playback.');
+          alert('❗ Please open this in the BetterStreaming desktop app.');
         }
-      } catch (e) {
-        console.error(e);
-        setError('❌ Failed to auto-play stream');
+      } catch (err) {
+        console.error(err);
+        setError('❌ Failed to stream video');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAndPlay();
+    fetchAndStream();
   }, [imdbId]);
 
   return (
     <div className="p-4">
-      <h1 className="text-lg font-bold">🎥 Now Playing</h1>
-      {loading && <p>⏳ Fetching best stream...</p>}
+      <h1 className="text-xl font-bold mb-2">🎬 Streaming</h1>
+      {loading && <p>⏳ Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      {!loading && !error && (
-        <p className="text-green-600">✅ Stream started via Tauri desktop app</p>
+      {videoUrl && (
+        <video
+          src={videoUrl}
+          controls
+          autoPlay
+          className="w-full rounded shadow-lg"
+        />
       )}
     </div>
   );

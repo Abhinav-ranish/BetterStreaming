@@ -24,4 +24,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri-plugin-deep-link = "2.2.1"
 warp = "0.3.7"
+tokio = { version = "1.44.2", features = ["full", "rt"] }
+torrent-rs = "0.1.0"
+anyhow = "1.0.97"
+
 

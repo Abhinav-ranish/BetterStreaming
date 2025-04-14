@@ -1,36 +1,28 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
-use tauri::Manager;
-use std::process::Command;
-use std::thread;
+use std::{net::SocketAddr, process::Command};
 use warp::Filter;
 
-#[tauri::command]
-fn start_stream_server(magnet: String) {
-    println!("▶️ Launching WebTorrent for magnet: {}", magnet);
+#[tokio::main]
+async fn main() {
+    println!("🔧 Starting local streaming server...");
 
-    // Spawn WebTorrent to download the magnet to ./tmp
-    thread::spawn(move || {
+    // Optional: Auto-start a test torrent
+    let magnet = "magnet:?xt=urn:btih:991bdd55479dda39a49a50a1eb52a03759db4e18";
+    tokio::spawn(async move {
         let _ = Command::new("webtorrent")
-            .arg(&magnet)
+            .arg(magnet)
             .arg("--out")
             .arg("./tmp")
             .arg("--quiet")
             .output()
-            .expect("❌ Failed to start WebTorrent");
+            .expect("❌ Failed to run WebTorrent");
     });
 
-    // Serve ./tmp/stream.mp4 via warp at http://localhost:4000/stream
-    thread::spawn(|| {
-        let route = warp::path("stream").and(warp::fs::file("./tmp/stream.mp4"));
-        println!("🚀 Serving stream on http://localhost:4000/stream");
-        warp::serve(route).run(([127, 0, 0, 1], 4000));
-    });
-}
+    // Serve the stream from ./tmp/stream.mp4
+    let route = warp::path("stream").and(warp::fs::file("./tmp/stream.mp4"));
 
-fn main() {
-    tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![start_stream_server])
-        .run(tauri::generate_context!())
-        .expect("❌ Tauri app failed to run");
+    let addr: SocketAddr = "127.0.0.1:4000".parse().unwrap();
+    println!("🚀 Server running at http://localhost:4000/stream");
+
+    // BLOCK HERE
+    warp::serve(route).run(addr).await;
 }
