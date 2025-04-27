@@ -1,20 +1,21 @@
-// app/dashboard/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+
 import { Card, CardContent } from '@/components/ui/card'; // ✅ NO .tsx
 import { motion } from 'framer-motion';
+import { useUser } from '@/contexts/UserContext'; // Import the custom hook
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
+  const { user } = useUser(); // Get the user from the global UserContext
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const u = localStorage.getItem('user');
-    if (u) setUser(JSON.parse(u));
-    setLoading(false);
-  }, []);
+    if (user) {
+      setLoading(false);
+    }
+  }, [user]);
 
   if (loading) return <p className="p-4">⏳ Loading...</p>;
 
@@ -29,7 +30,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="hover:shadow-xl transition">
-          <CardContent className="p-4">
+          <CardContent>
             <h2 className="text-lg font-semibold">Browse Content</h2>
             <p className="text-sm text-gray-500 mb-2">Find available titles and start streaming</p>
             <Link
@@ -43,7 +44,7 @@ export default function DashboardPage() {
 
         {user?.isAdmin && (
           <Card className="hover:shadow-xl transition">
-            <CardContent className="p-4">
+            <CardContent>
               <h2 className="text-lg font-semibold">Admin Panel</h2>
               <p className="text-sm text-gray-500 mb-2">Add accounts, manage users and titles</p>
               <Link

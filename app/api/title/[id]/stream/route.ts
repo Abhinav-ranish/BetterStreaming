@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const streamData = await fetchFromStremio(`/stream/movie/${imdbId}.json`);
-    return NextResponse.json({ streams: streamData });
+    return NextResponse.json({ streams: streamData.streams || [] });    
   } catch (error) {
     console.error('❌ Stream fetch error:', error);
     return NextResponse.json({ streams: [] }, { status: 404 });

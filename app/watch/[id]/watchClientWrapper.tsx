@@ -1,11 +1,8 @@
 'use client';
-import dynamic from 'next/dynamic';
 
-// Dynamic import with SSR disabled
-const WatchClient = dynamic(() => import('@/components/WatchClient'), {
-  ssr: false,
-});
+import WatchClient from './WatchClient';
 
 export default function WatchClientWrapper({ imdbId }: { imdbId: string }) {
+  console.log("👀 imdbId from wrapper:", imdbId);
   return <WatchClient imdbId={imdbId} />;
 }

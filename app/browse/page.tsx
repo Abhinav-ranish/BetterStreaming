@@ -27,7 +27,7 @@ export default function BrowsePage() {
 
   return (
     <div className="p-6 bg-black min-h-screen text-white">
-      <h1 className="text-3xl font-bold mb-6">🎬 All Titles</h1>
+      <h1 className="text-3xl font-bold mb-6">🎬 Popular Titles</h1>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {titles.map((t) => (
           <div

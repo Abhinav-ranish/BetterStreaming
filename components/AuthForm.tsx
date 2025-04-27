@@ -1,17 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';  // Import useEffect along with useState
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/contexts/UserContext'; // Import the UserContext
+
 
 export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const router = useRouter();
 
+  const { setUser, user } = useUser(); // Access setUser and user from UserContext
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard'); // Redirect to dashboard if user already exists
+    }
+  }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +45,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
           const data = await res.json();
           if (!res.ok) throw new Error(data.message);
-          localStorage.setItem('user', JSON.stringify(data.user));
+          setUser(data.user); // Update the global user state
           router.push('/dashboard');
         }
       } else {
@@ -47,11 +56,11 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user); // Update the global user state
         router.push('/dashboard');
       }
     } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+      setError(err.message || 'Invalid Credentials');
     }
   };
 

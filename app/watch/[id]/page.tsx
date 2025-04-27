@@ -1,5 +1,12 @@
-import WatchClientWrapper from './watchClientWrapper';
+// @ts-ignore
+import WatchClientWrapper from './WatchClientWrapper';
 
-export default async function WatchPage({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  return {
+    title: `Watching ${params.id}`,
+  };
+}
+
+export default function Page({ params }: { params: { id: string } }) {
   return <WatchClientWrapper imdbId={params.id} />;
 }
